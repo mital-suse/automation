@@ -1,5 +1,5 @@
 - job:
-    name: 'ccp-full-periodic'
+    name: 'cloud-ccp-full-periodic'
     node: cloud-trackupstream
 
     parameters:
@@ -7,22 +7,6 @@
           name: ccp_repo
           default: https://github.com/SUSE-Cloud/socok8s.git
           description: The git repository to use
-      - string:
-          name: PREFIX
-          default: foctodoodle
-          description: The PREFIX to use for openstack resources
-      - string:
-          name: OS_CLOUD
-          default: engcloud
-          description: The name of the OpenStack cloud in clouds.yaml
-      - string:
-          name: KEYNAME
-          default: foctodoodle-key
-          description: The ssh-keyname used to configure nodes and connect.
-      - string:
-          name: INTERNAL_SUBNET
-          default: foctodoodle-subnet
-          description: The subnet to put the machines on.
 
     triggers:
       - timed: '0 0 * * *'
@@ -38,10 +22,10 @@
     builders:
       - shell: |
           set -ex
-          export PREFIX=${PREFIX}
-          export OS_CLOUD=${OS_CLOUD}
-          export KEYNAME=${KEYNAME}
-          export INTERNAL_SUBNET=${INTERNAL_SUBNET}
+          export PREFIX=${PREFIX:-'ccpci'}
+          export OS_CLOUD=${OS_CLOUD:-'engcloud'}
+          export KEYNAME=${KEYNAME:-'ccpcikey'}
+          export INTERNAL_SUBNET="${PREFIX}-subnet"
 
           # Make sure the job has a cloud available, and environemnt
           # vars are properly defined
@@ -61,6 +45,11 @@
           popd
       - shell: |
           # Destroy me the CCP env
+          export PREFIX=${PREFIX:-'ccpci'}
+          export OS_CLOUD=${OS_CLOUD:-'engcloud'}
+          export KEYNAME=${KEYNAME:-'ccpcikey'}
+          export INTERNAL_SUBNET="${PREFIX}-subnet"
+
           pushd ~/ccp/socok8s
               ./run.sh teardown
           popd
