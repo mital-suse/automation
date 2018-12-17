@@ -1,55 +1,39 @@
 - job:
     name: 'cloud-ccp-full-periodic'
-    node: cloud-trackupstream
+    project-type: pipeline
+    # make it really explicit we don't want to run two jobs at the same time
+    concurrent: false
+    wrappers:
+      - timestamps #I don't know what I am doing there
+      # Some steps of the process might take a while without stdout.
+      - timeout:
+          timeout: 30
+          type: no-activity
+          abort: true
+          write-description: "Job aborted due to 30 minutes of inactivity"
+
+    logrotate:
+      numToKeep:  300
+      daysToKeep: 300
 
     parameters:
       - string:
           name: ccp_repo
           default: https://github.com/SUSE-Cloud/socok8s.git
-          description: The git repository to use
+          description: socok8s repo
 
     triggers:
       - timed: '0 0 * * *'
 
-    wrappers:
-      - workspace-cleanup:
-          dirmatch: true
+    # How can I test my PR on automation repo? I would like to pass the PR branch?
+    pipeline-scm:
+      scm:
+        - git:
+            url: https://github.com/SUSE-Cloud/automation.git
+            branches:
+              - master
+            browser: auto #No idea what I am doing
+            wipe-workspace: false
+      script-path: jenkins/ci.suse.de/pipelines/${JOB_NAME}.Jenkinsfile
+      lightweight-checkout: false
 
-    logrotate:
-      numToKeep: 300
-      daysToKeep: -1
-
-    builders:
-      - shell: |
-          set -ex
-          export PREFIX=${PREFIX:-'ccpci'}
-          export OS_CLOUD=${OS_CLOUD:-'engcloud'}
-          export KEYNAME=${KEYNAME:-'ccpcikey'}
-          export INTERNAL_SUBNET="${PREFIX}-subnet"
-
-          # Make sure the job has a cloud available, and environemnt
-          # vars are properly defined
-          cat ~/.config/openstack/clouds.yaml
-          env
-
-          # Get started
-          mkdir ~/ccp/
-          pushd ~/ccp
-              # No need for branchname, as the full periodic job always tests
-              # latest master branch
-              git clone --recursive ${ccp_repo} socok8s
-              pushd socok8s
-                  ./run.sh
-              popd
-          rm -rf socok8s
-          popd
-      - shell: |
-          # Destroy me the CCP env
-          export PREFIX=${PREFIX:-'ccpci'}
-          export OS_CLOUD=${OS_CLOUD:-'engcloud'}
-          export KEYNAME=${KEYNAME:-'ccpcikey'}
-          export INTERNAL_SUBNET="${PREFIX}-subnet"
-
-          pushd ~/ccp/socok8s
-              ./run.sh teardown
-          popd
