@@ -27,7 +27,7 @@ pipeline {
 
             # Make sure the job has a cloud available, and environemnt
             # vars are properly defined
-            cat ~/.config/openstack/clouds.yaml
+            cat ~/.config/openstack/clouds.yaml | grep -v password
             env
 
             # Get started
