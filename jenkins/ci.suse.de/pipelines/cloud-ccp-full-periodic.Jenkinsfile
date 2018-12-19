@@ -31,7 +31,7 @@ pipeline {
             env
 
             # Get started
-            mkdir ${WORKSPACE}/ccp/
+            mkdir ${WORKSPACE}/ccp/ || true
             pushd ${WORKSPACE}/ccp
                 # No need for branchname, as the full periodic job always tests
                 # latest master branch
@@ -50,6 +50,7 @@ pipeline {
     always {
       script {
         sh('''
+          env
           pushd ${WORKSPACE}/ccp/
             export PREFIX=${PREFIX:-'ccpci'}
             export OS_CLOUD=${OS_CLOUD:-'engcloud-cloud-ci'}
