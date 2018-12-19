@@ -3,7 +3,7 @@ pipeline {
      cleanup stage if failure on "deployer everything" stage?
   */
   options {
-    skipDefaultCheckout() /* skips the clone of automation repo into wrkspc %/
+    skipDefaultCheckout() /* skips the clone of automation repo into wrkspc */
     timestamps()
     timeout(time: 30, unit: 'MINUTES', activity: true)
   }
