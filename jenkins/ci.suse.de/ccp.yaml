@@ -24,6 +24,11 @@
           default: https://github.com/SUSE-Cloud/socok8s.git
           description: socok8s repo
 
+      - string:
+          name: ccp_branch
+          default: master
+          description: The socok8s branch
+
     triggers:
       - timed: '0 0 * * *'
 

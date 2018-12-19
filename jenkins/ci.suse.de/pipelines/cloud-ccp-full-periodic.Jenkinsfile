@@ -36,6 +36,7 @@ pipeline {
                 # No need for branchname, as the full periodic job always tests
                 # latest master branch
                 git clone --recursive ${ccp_repo} socok8s
+                git checkout ${ccp_branch}
                 pushd socok8s
                     ./run.sh
                 popd
