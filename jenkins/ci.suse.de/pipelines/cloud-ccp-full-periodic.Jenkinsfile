@@ -31,8 +31,8 @@ pipeline {
             env
 
             # Get started
-            mkdir ccp/
-            pushd ccp
+            mkdir ${WORKSPACE}/ccp/
+            pushd ${WORKSPACE}/ccp
                 # No need for branchname, as the full periodic job always tests
                 # latest master branch
                 git clone --recursive ${ccp_repo} socok8s
@@ -50,13 +50,13 @@ pipeline {
     always {
       script {
         sh('''
-          pushd ccp/
+          pushd ${WORKSPACE}/ccp/
             export PREFIX=${PREFIX:-'ccpci'}
             export OS_CLOUD=${OS_CLOUD:-'engcloud-cloud-ci'}
             export KEYNAME=${KEYNAME:-'engcloud-cloud-ci'}
             export INTERNAL_SUBNET="${PREFIX}-subnet"
 
-            pushd ccp/socok8s
+            pushd socok8s
                 ./run.sh teardown
             popd
             rm -rf socok8s
