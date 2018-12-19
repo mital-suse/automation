@@ -21,7 +21,7 @@ pipeline {
           sh('''
             set -ex
             export PREFIX=${PREFIX:-'ccpci'}
-            export OS_CLOUD=${OS_CLOUD:-'engcloud-cloud-ci-private'}
+            export OS_CLOUD=${OS_CLOUD:-'engcloud-cloud-ci'}
             export KEYNAME=${KEYNAME:-'engcloud-cloud-ci'}
             export INTERNAL_SUBNET="${PREFIX}-subnet"
 
@@ -53,7 +53,7 @@ pipeline {
         sh('''
           pushd ~/ccp/
             export PREFIX=${PREFIX:-'ccpci'}
-            export OS_CLOUD=${OS_CLOUD:-'engcloud-cloud-ci-private'}
+            export OS_CLOUD=${OS_CLOUD:-'engcloud-cloud-ci'}
             export KEYNAME=${KEYNAME:-'engcloud-cloud-ci'}
             export INTERNAL_SUBNET="${PREFIX}-subnet"
 
